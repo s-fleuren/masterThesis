@@ -1,13 +1,7 @@
 import numpy as np
 import pickle
 from projection_matrices import *
-
-
-def unpackbits16(n, l):
-    n1 = np.array([n//256], dtype=np.uint8)
-    n2 = np.array([n], dtype=np.uint8)
-    b = np.concatenate((np.unpackbits(n1), np.unpackbits(n2)))
-    return b[16 - l:]
+from utility import *
 
 
 def get_unique_and_muliples_N(d):

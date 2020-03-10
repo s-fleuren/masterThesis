@@ -65,22 +65,3 @@ class Iterate:
                 return
 
 
-used_projections = [1] * 2 + [0] * 2
-A = combineProjections(2, 2, used_projections)
-y = np.array([1, 1, 2, 0])
-x = Iterate(np.array([0.5, 0.5, 0.5, 0.5]))
-x.gradientProjectionStep(A, y)
-print(x.solution)
-print(x.is_active)
-x.gradientProjectionStep(A, y)
-print(x.solution)
-print(x.is_active)
-x.gradientProjectionStep(A, y)
-print(x.solution)
-print(x.is_active)
-x.gradientProjectionStep(A, y)
-print(x.solution)
-print(x.is_active)
-x.gradientProjectionStep(A, y)
-print(x.solution)
-print(x.is_active)
