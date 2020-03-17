@@ -26,7 +26,6 @@ def problem_reduction_single(A, y, i, val):
     return new_A, new_y
 
 
-
 def split_nu(nu):
     N = nu.size
     alpha = np.zeros(N)

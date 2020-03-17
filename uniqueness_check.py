@@ -2,6 +2,9 @@ from projection_matrices import *
 from scipy_least_squares import *
 from utility import *
 
+"""Here we confirm that for 2x2, 3x3 and 4x4 images and direction sets D^2, D^3 and D^4, the relaxed discrete tomography
+   problem CCLS has a unique optimal solution whenever BCLS has a unique optimal solution"""
+
 def get_all_unique_x(d):
     output = []
     for k in d.keys():

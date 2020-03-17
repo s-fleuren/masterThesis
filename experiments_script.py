@@ -3,6 +3,8 @@ import os
 import time
 from tabulate import tabulate
 
+"""Generate the numerical results discussed in our report"""
+
 np.random.seed(1901714035)
 
 directory_name = 'datasets/MPEG7_CE-Shape-1_Part_B/MPEG7_CE-Shape-1_Part_B'

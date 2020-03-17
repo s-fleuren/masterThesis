@@ -1,7 +1,6 @@
-import numpy as np
-from projection_matrices import *
 from utility import *
 
+"""Outdated, use method from scipy_least_squares instead"""
 
 class Iterate:
     def __init__(self, initial_solution):

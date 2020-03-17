@@ -14,12 +14,20 @@ class CCLS_instance:
         self.M, self.N = A.shape
 
     def fusion(self, x):
+        """
+        Returns the fusion of input x and the current partial solution z
+        """
         new_x = x.copy()
         for i in range(self.z.size):
             new_x[self.mask[i]] = self.z[i]
         return new_x
 
     def compare_z(self, x):
+        """
+        Returns the size of the set {i in [N] : x[i] == z[i]}, where z is the current partial solution
+        :param x:
+        :return:
+        """
         counter = 0
         for i in range(self.z.size):
             j = self.mask[i]
@@ -28,6 +36,9 @@ class CCLS_instance:
         return counter
 
     def problem_reduction_single(self, i, val):
+        """
+        Reduces the problem size by one by adding the constraint x[i] = val
+        """
         y_update = - val * self.A.getcol(i).toarray().flatten()
         self.y += y_update
         self.A = sparse.hstack([self.A[:, :i], self.A[:, i + 1:]], format='csr')
@@ -36,16 +47,25 @@ class CCLS_instance:
         self.z = np.insert(self.z, z_index, val)
 
     def visualise_z(self, n1, n2):
+        """
+        Display an n1 x n2 image of the current partial solution.
+        """
         full_vector = self.fusion(0.6 * np.ones(self.N))
         im = Image.fromarray(255 * full_vector.reshape((n1, n2)))
         im.show()
 
     def save_z_image(self, n1, n2, file_name):
+        """
+        Save an n1 x n2 image of the current partial solution.
+        """
         full_vector = self.fusion(0.6 * np.ones(self.N))
         im = Image.fromarray(255 * full_vector.reshape((n1, n2)))
         im.convert('RGB').save(file_name)
 
     def reduction_size_one_autarkies(self):
+        """
+        Eliminate all the size one autarkies of the current problem instance
+        """
         done = False
         while not done:
             current_N = self.A.shape[1]
@@ -68,6 +88,11 @@ class CCLS_instance:
                 done = True
 
     def reduction_implication_network(self, rounding_parameter):
+        """
+        Use an implication network to reduce the current problem instance.
+        :param rounding_parameter: the projection data will be truncated to [rounding_parameter], in order to be able
+               to use integer capacities in the implication network.
+        """
         current_N = self.A.shape[1]
         A_csc = self.A.tocsc()
         B = 10 ** rounding_parameter * A_csc.transpose() * A_csc
@@ -92,11 +117,6 @@ class CCLS_instance:
         symmetric_outer_flow.data //= 2
         flow[2 * current_N, :current_N] = symmetric_outer_flow
         flow[current_N: 2 * current_N, 2 * current_N + 1] = symmetric_outer_flow.transpose()
-
-        #for i in range(2 * current_N + 2):
-        #    for j in range(2 * current_N + 2):
-        #        if Adjacency_matrix[i,j] < flow[i,j]:
-        #            print(str(i) + " " + str(j))
 
         residual = Adjacency_matrix - flow
         residual.eliminate_zeros()
@@ -134,6 +154,17 @@ class CCLS_instance:
         return 0
 
     def reduction_dual(self, tol, upperbound, x_0='default', precomputed_x_hat='not_computed'):
+        """
+        Use Langrangian duality to reduce the current problem instance.
+        :param tol: Tolerance used for termination of the computation of $\hat x$. Setting tol = epsilon guarantees
+               that $\hat x$ will be an epsilon-pseudo-optimal solution.
+        :param upperbound: Upper bound on the optimal objective value of BCLS. If such an upper bound is not known enter
+                           "'not_computed'".
+        :param x_0: Initial guess for an optimal solution of the relaxed discrete tomography problem (CCLS). Enter
+                    "'default'" to use x0[i] = 0.5 for each i.
+        :param precomputed_x_hat: In case an (almost) optimal solution of CCLS was already computed, enter it here.
+               Otherwise an tol-pseudo-optimal solution will be computed by using a least squares solver.
+        """
         current_N = self.A.shape[1]
         if precomputed_x_hat is 'not_computed':
             if x_0 is 'default':
